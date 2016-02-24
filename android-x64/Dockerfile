@@ -1,4 +1,4 @@
-FROM cross-compiler:android-x64
+FROM quay.io/coreos/cross-compiler:android-x64
 
 RUN mkdir -p /build
 WORKDIR /build

@@ -1,10 +1,15 @@
+# Name of the project.
 NAME = libtorrent-go
-GO_PACKAGE = github.com/scakemyer/$(NAME)
+GO_PACKAGE = github.com/coreos/$(NAME)
+DOCKER_IMAGE = quay.io/coreos/$(NAME)
+
+# Set binaries and platform specific variables.
 CC = cc
 CXX = c++
 PKG_CONFIG = pkg-config
 DOCKER = docker
-DOCKER_IMAGE = $(NAME)
+
+# Platforms on which we want to build the project.
 PLATFORMS = \
 	android-arm \
 	android-x64 \
@@ -74,11 +79,20 @@ else ifeq ($(TARGET_OS), darwin)
 	CC_DEFINES += -DBOOST_HAS_PTHREADS
 endif
 
-
 OUT_PATH = $(shell go env GOPATH)/pkg/$(GOOS)_$(GOARCH)
 OUT_LIBRARY = $(OUT_PATH)/$(GO_PACKAGE).a
 
 .PHONY: $(PLATFORMS)
+
+env:
+	for i in $(PLATFORMS); do \
+		$(DOCKER) build -t $(DOCKER_IMAGE):$$i $$i; \
+	done
+
+push-env: env
+	for i in $(PLATFORMS); do \
+		$(DOCKER) push $(DOCKER_IMAGE):$$i; \
+	done
 
 all:
 	for i in $(PLATFORMS); do \
@@ -86,11 +100,7 @@ all:
 	done
 
 $(PLATFORMS):
-ifeq ($@, all)
-	$(MAKE) all
-else
 	$(DOCKER) run --rm -v $(GOPATH):/go -v $(shell pwd):/go/src/$(GO_PACKAGE) -w /go/src/$(GO_PACKAGE) -e GOPATH=/go $(DOCKER_IMAGE):$@ make re;
-endif
 
 build:
 	SWIG_FLAGS='$(CC_DEFINES) $(LIBTORRENT_CFLAGS)' \
@@ -105,19 +115,3 @@ clean:
 	rm -rf $(OUT_LIBRARY)
 
 re: clean build
-
-env:
-	$(DOCKER) build -t $(DOCKER_IMAGE):$(PLATFORM) $(PLATFORM)
-
-envs:
-	for i in $(PLATFORMS); do \
-		$(MAKE) env PLATFORM=$$i; \
-	done
-
-pull:
-	docker pull quasarhq/cross-compiler:$(PLATFORM)
-	docker tag quasarhq/cross-compiler:$(PLATFORM) cross-compiler:$(PLATFORM)
-
-push:
-	docker tag libtorrent-go:$(PLATFORM) quasarhq/libtorrent-go:$(PLATFORM)
-	docker push quasarhq/libtorrent-go:$(PLATFORM)

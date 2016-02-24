@@ -1,4 +1,4 @@
-FROM cross-compiler:linux-arm
+FROM quay.io/coreos/cross-compiler:linux-arm
 
 RUN mkdir -p /build
 WORKDIR /build
