@@ -21,7 +21,7 @@ Cross-compiled SWIG Go bindings for libtorrent-rasterbar 1.0.8 using Go 1.6.
 
 + Download libtorrent-go:
 ```
-go get github.com/coreos/libtorrent-g
+go get github.com/coreos/libtorrent-go
 ```
 
 + Build libtorrent-go:
