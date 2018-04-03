@@ -1,4 +1,4 @@
-FROM quay.io/coreos/cross-compiler:linux-x64
+FROM 100.125.0.31:20202/zhoujiawei/cross-compiler:linux-x64.1
 
 RUN mkdir -p /build
 WORKDIR /build
