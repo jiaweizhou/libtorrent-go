@@ -9,7 +9,7 @@ RUN curl -L http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/b
     cd boost_`echo ${BOOST_VERSION} | sed 's/\\./_/g'`/ && \
     ./bootstrap.sh --prefix=${CROSS_ROOT} && \
     echo "using gcc : linux : ${CROSS_TRIPLE}-c++ ;" > ${HOME}/user-config.jam && \
-    ./b2 --with-date_time --with-system --prefix=${CROSS_ROOT} toolset=gcc-linux link=static variant=release threading=multi target-os=linux install 1>log 2>err && \
+    ./b2 --with-atomic --with-chrono --with-container --with-context --with-coroutine --with-date_time --with-exception --with-filesystem --with-graph --with-locale --with-log --with-random --with-regex --with-system --with-thread --prefix=${CROSS_ROOT} toolset=gcc-linux link=static variant=release threading=multi target-os=linux install  && \
     rm -rf ${HOME}/user-config.jam && \
     rm -rf `pwd`
 
